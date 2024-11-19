@@ -1,0 +1,14 @@
+<!-- game_edit.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Edit Game</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="action-button">Save Changes</button>
+</form>
+
+<a href="{% url 'game_list' %}" class="back-link">Back to Game List</a>
+{% endblock %}

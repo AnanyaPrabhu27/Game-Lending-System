@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Styles for tab buttons */
+    .tab-buttons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 15px;
+    }
+
+    .tab-button {
+        background-color: #C63D2F;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .tab-button:hover {
+        background-color: #a83025;
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Action buttons styling */
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .action-button {
+        background-color: #C63D2F;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .action-button:hover {
+        background-color: #a83025;
+    }
+
+    /* Game list styling */
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #FAF7F0;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h3 {
+        margin: 0 0 10px;
+        color: #C63D2F;
+    }
+</style>
+
+<div class="content-wrapper">
+    <h2>List of Board Games</h2>
+
+    <!-- Action buttons for Profile and Logout for all users -->
+    <div class="action-buttons">
+        <!-- Profile button for all users -->
+        <a href="{% url 'profile' %}" class="action-button">Profile</a>  
+
+        <!-- Show 'Add New Game' button only for superusers -->
+        {% if user.is_superuser %}
+            <a href="{% url 'add_game' %}" class="action-button">Add New Game</a>
+        {% endif %}
+
+        <!-- Logout button -->
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-button">Logout</button>
+        </form>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div class="tab-buttons">
+        <button class="tab-button" onclick="showTab('borrowed')">Borrowed Games</button>
+        <button class="tab-button" onclick="showTab('available')">Available Games</button>
+    </div>
+
+    <!-- Borrowed Games Tab -->
+    <div id="borrowed" class="tab-content active">
+        {% if borrowed_games %}
+        <ul>
+            {% for game in borrowed_games %}
+            <li>
+                <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3> <!-- Game title now links to the game detail page -->
+                <p>{{ game.description }}</p>
+                <p><strong>Genre:</strong> {{ game.genre }}</p>
+                <p><strong>Players:</strong> {{ game.player_count }}</p>
+                <p><strong>Status:</strong> Borrowed by {{ game.borrowed_by.username }}</p>
+                <p><strong>Borrowed Date:</strong> {{ game.borrowed_date|date:"M. d, Y" }}</p>
+                <p><strong>Due Date:</strong> {{ game.due_date|date:"M. d, Y" }}</p>
+                {% if user.is_superuser %}
+                <form action="{% url 'delete_game' game.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-button">Delete</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No borrowed games available.</p>
+        {% endif %}
+    </div>
+
+    <!-- Available Games Tab -->
+    <div id="available" class="tab-content">
+        {% if available_games %}
+        <ul>
+            {% for game in available_games %}
+            <li>
+                <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3> <!-- Game title now links to the game detail page -->
+                <p>{{ game.description }}</p>
+                <p><strong>Genre:</strong> {{ game.genre }}</p>
+                <p><strong>Players:</strong> {{ game.player_count }}</p>
+                <p><strong>Status:</strong> Available</p>
+                <a href="{% url 'borrow_game' game.id %}" class="action-button">Borrow</a>
+                {% if user.is_superuser %}
+                <form action="{% url 'delete_game' game.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-button">Delete</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No available games at the moment.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+{% endblock %}
