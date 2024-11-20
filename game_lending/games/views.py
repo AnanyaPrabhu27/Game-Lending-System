@@ -10,6 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import user_passes_test
 from .forms import ProfileForm
+from datetime import timedelta
 
 
 def game_list(request):
@@ -23,23 +24,7 @@ def game_list(request):
     }
     return render(request, 'game_list.html', context)
 
-@login_required
-def borrow_game(request, game_id):
-    game = get_object_or_404(BoardGame, id=game_id)
-    if game.is_available():
-        # Ensure the user has not borrowed more than 3 games
-        if request.user.borrowed_games.count() >= 3:
-            messages.error(request, "You cannot borrow more than 3 games at a time.")
-            return redirect('game_list')
-        
-        # Set the game as borrowed by the current user
-        game.borrowed_by = request.user
-        game.borrow_date = timezone.now()
-        game.save()
-        messages.success(request, f"You have borrowed {game.title}.")
-    else:
-        messages.error(request, f"{game.title} is already borrowed by someone else.")
-    return redirect('game_list')
+
 
 @login_required
 def return_game(request, game_id):
@@ -165,9 +150,26 @@ def game_detail(request, game_id):
 
 @login_required
 def borrow_game(request, game_id):
-    game = BoardGame.objects.get(id=game_id)
+    game = get_object_or_404(BoardGame, id=game_id)
+    
+    # Check if the user has borrowed 3 games
+    if request.user.borrowed_games.count() >= 3:
+        messages.error(request, "You cannot borrow more than 3 games at a time.")
+        return redirect('game_list')
+
+    # Check if the game is available for borrowing
     if game.is_available:
-        game.borrow(request.user)
+        # Mark the game as borrowed by the user
+        game.borrowed_by = request.user
+        game.borrowed_date = timezone.now()
+        game.due_date = game.borrowed_date + timedelta(days=7)  # Set a due date (e.g., 7 days from today)
+        game.is_available = False  # Mark the game as borrowed
+        game.save()
+
+        messages.success(request, f"You have borrowed {game.title}.")
+    else:
+        messages.error(request, f"{game.title} is already borrowed by someone else.")
+
     return redirect('game_list')
 
 @login_required
