@@ -128,40 +128,9 @@ def edit_game(request, game_id):
         form = BoardGameForm(instance=game)
     return render(request, 'games/edit_game.html', {'form': form})
 
-@login_required
-def add_review(request, game_id):
-    game = get_object_or_404(BoardGame, id=game_id)
-    
-    # Check if the user has borrowed the game
-    if game.borrowed_by != request.user:
-        messages.error(request, "You can only review games you have borrowed.")
-        return redirect('game_list')
-    
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)
-            review.game = game
-            review.user = request.user
-            review.save()
-            messages.success(request, "Your review has been submitted.")
-            return redirect('game_detail', game_id=game.id)
-    else:
-        form = ReviewForm()
-    
-    return render(request, 'games/add_review.html', {'form': form, 'game': game})
 
 
-@login_required
-def game_detail(request, game_id):
-    game = get_object_or_404(BoardGame, id=game_id)
-    # Retrieve the reviews for the game, if any
-    reviews = game.reviews.all()
-    
-    return render(request, 'games/game_detail.html', {
-        'game': game,
-        'reviews': reviews,
-    })
+
 
 @login_required
 def borrow_game(request, game_id):
@@ -198,21 +167,3 @@ def profile(request):
     else:
         form = ProfileForm(instance=user)
     return render(request, 'games/profile.html', {'form': form})
-
-@login_required
-def update_review(request, review_id):
-    review = get_object_or_404(Review, id=review_id)
-
-    # Ensure that the user can only edit their own review
-    if review.user != request.user:
-        return redirect('game_list')
-
-    if request.method == 'POST':
-        form = ReviewForm(request.POST, instance=review)
-        if form.is_valid():
-            form.save()
-            return redirect('game_detail', game_id=review.game.id)
-    else:
-        form = ReviewForm(instance=review)
-
-    return render(request, 'games/update_review.html', {'form': form, 'review': review})
