@@ -125,6 +125,15 @@
                 <p><strong>Status:</strong> Borrowed by {{ game.borrowed_by.username }}</p>
                 <p><strong>Borrowed Date:</strong> {{ game.borrowed_date|date:"M. d, Y" }}</p>
                 <p><strong>Due Date:</strong> {{ game.due_date|date:"M. d, Y" }}</p>
+
+                {% if game.borrowed_by == user %}
+                <!-- Button for the user to return the game -->
+                <form action="{% url 'return_game' game.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-button">Return Game</button>
+                </form>
+                {% endif %}
+
                 {% if user.is_superuser %}
                 <form action="{% url 'delete_game' game.id %}" method="post" style="display: inline;">
                     {% csrf_token %}
