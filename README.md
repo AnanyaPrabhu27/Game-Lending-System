@@ -24,8 +24,8 @@ A Django-based platform that allows users to upload, lend, borrow, and review ga
 ##👥 Contributors
 This project was developed as a team effort. Special thanks to the contributors:
 
-Ananya Prabhu – @Anu27Prabhu
-Tulsi Chityala – @tulsich
-Iqra Majeed – @Iqramajeed542
-Rimmi Bhadani - @RimmiBhadani
-Dawa Sangmo – @dawasangmo
+- Ananya Prabhu – @Anu27Prabhu
+- Tulsi Chityala – @tulsich
+- Iqra Majeed – @Iqramajeed542
+- Rimmi Bhadani - @RimmiBhadani
+- Dawa Sangmo – @dawasangmo
