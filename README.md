@@ -21,7 +21,7 @@ A Django-based platform that allows users to upload, lend, borrow, and review ga
 - Django Admin
 - Possibly: `django-crispy-forms`, `django-environ`
 
-##👥 Contributors
+## 👥 Contributors
 This project was developed as a team effort. Special thanks to the contributors:
 
 - Ananya Prabhu – @Anu27Prabhu
