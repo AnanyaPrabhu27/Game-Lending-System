@@ -2,12 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "game_lending/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "50mb", "runtime": "python3.10" }
+      "src": "game_lending/game_lending/wsgi.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "game_lending/wsgi.py" }
-  ]
+    {
+      "src": "/(.*)",
+      "dest": "game_lending/game_lending/wsgi.py"
+    }
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "game_lending.game_lending.settings",
+    "PYTHONUNBUFFERED": "1"
+  }
 }
