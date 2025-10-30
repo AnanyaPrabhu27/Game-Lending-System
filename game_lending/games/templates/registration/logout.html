@@ -1,0 +1,47 @@
+{% extends "games/base.html" %}
+{% block title %}Logout | GameLend{% endblock %}
+{% block content %}
+
+<style>
+  :root{
+    --bg-wood:#2b1b17;
+    --panel:#faf4e9;
+    --ink:#2b1e17;
+    --accent:#d8a043;
+  }
+  body{background:var(--bg-wood);}
+  .logout-box{
+    max-width:460px;margin:100px auto;padding:44px 38px;
+    background:var(--panel);
+    border-radius:18px;
+    border:1px solid #eadfce;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+    text-align:center;
+  }
+  h1{
+    font-family:"Cinzel","Playfair Display",serif;
+    color:var(--ink);
+    font-size:28px;
+    margin-bottom:14px;
+  }
+  p{color:#5c453b}
+  a.btn{
+    display:inline-block;
+    margin-top:18px;
+    background:linear-gradient(180deg,#ffd890,var(--accent));
+    color:#2b1c16;
+    padding:10px 20px;
+    border-radius:12px;
+    font-weight:700;
+    text-decoration:none;
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+  }
+  a.btn:hover{transform:translateY(-2px);}
+</style>
+
+<section class="logout-box">
+  <h1>Logged Out</h1>
+  <p>You've safely signed out of your GameLend account.</p>
+  <a href="{% url 'login' %}" class="btn">Return to Login</a>
+</section>
+{% endblock %}

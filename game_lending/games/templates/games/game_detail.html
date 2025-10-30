@@ -135,6 +135,8 @@
 
                    {% if review.user == user or user.is_superuser %}
     <a href="{% url 'edit_review' review.id %}" class="button">Edit Review</a>
+    <a href="{% url 'delete_review' review.id %}" class="button" style="color:#b22222; margin-left:10px;">Delete</a>
+
 {% endif %}
                 </div>
             {% endfor %}

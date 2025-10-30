@@ -5,13 +5,46 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
-
 from .models import BoardGame, Review
 from .forms import BoardGameForm, ReviewForm, ProfileForm
 
 # ---------- Pages ----------
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+
+    # ✅ Only author or superuser can delete
+    if request.user != review.user and not request.user.is_superuser:
+        messages.error(request, "You don't have permission to delete this review.")
+        return redirect('game_detail', game_id=review.game.id)
+
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, "Your review has been deleted successfully.")
+        return redirect('game_detail', game_id=review.game.id)
+
+    return render(request, 'games/delete_review.html', {'review': review})
+
+@login_required
+def edit_review(request, review_id):
+    review = get_object_or_404(Review, pk=review_id)
+
+    # Allow only the author or admin to edit
+    if request.user != review.user and not request.user.is_superuser:
+        return redirect('game_detail', game_id=review.game.id)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect('game_detail', game_id=review.game.id)
+    else:
+        form = ReviewForm(instance=review)
+
+    return render(request, 'games/update_review.html', {'form': form, 'review': review})
 
 def safe_logout(request):
     if request.method == "POST":
