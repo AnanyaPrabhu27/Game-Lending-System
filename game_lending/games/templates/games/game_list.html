@@ -1,187 +1,152 @@
-{% extends "base.html" %}
-
+{% extends "games/base.html" %}
 {% block content %}
+
 <style>
-    /* Styles for tab buttons */
-    .tab-buttons {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 20px;
-        gap: 15px;
-    }
+  :root{
+    --bg-wood:#2b1b17; --card:#3a2722; --card-hover:#4a2f28;
+    --token:#d8a043; --token-2:#c04b3b; --text:#f7efe6; --muted:#cfbda9;
+  }
+  body{background:var(--bg-wood);}
+  .wrap{max-width:1200px;margin:36px auto;padding:0 20px}
+  h2{
+    text-align:center;color:var(--token);font-family:"Press Start 2P", system-ui;letter-spacing:1px;
+    font-size:1rem;margin:1.2rem 0 1rem;text-shadow:0 2px 0 rgba(0,0,0,.3);
+  }
+  .actions-top{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .btn{
+    appearance:none;border:0;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer;
+    background:linear-gradient(180deg,#ffd890,var(--token)); color:#2a1d18;
+    box-shadow:0 8px 18px rgba(0,0,0,.25), inset 0 1px 0 #fff7; transition:transform .12s, box-shadow .12s
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.32)}
+  .toggle{display:flex;justify-content:center;gap:10px;margin:10px 0 22px}
+  .toggle button{
+    background:#3c2924;color:#f0e6db;border:1px solid #6b5147;border-radius:10px;padding:8px 14px;cursor:pointer
+  }
+  .toggle button.active{background:var(--token);color:#2a1d18;font-weight:900}
 
-    .tab-button {
-        background-color: #C63D2F;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: bold;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+  /* 3×3 responsive grid with roomy gaps */
+  .grid{
+    display:grid; grid-template-columns:repeat(3, minmax(260px, 1fr));
+    gap:32px; align-items:start;
+  }
+  @media (max-width:1080px){ .grid{grid-template-columns:repeat(2, minmax(260px, 1fr));} }
+  @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
 
-    .tab-button:hover {
-        background-color: #a83025;
-    }
-
-    .tab-content {
-        display: none;
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
-    /* Action buttons styling */
-    .action-buttons {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .action-button {
-        background-color: #C63D2F;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        font-weight: bold;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .action-button:hover {
-        background-color: #a83025;
-    }
-
-    /* Game list styling */
-    ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    li {
-        margin-bottom: 20px;
-        padding: 15px;
-        background-color: #FAF7F0;
-        border-radius: 8px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h3 {
-        margin: 0 0 10px;
-        color: #C63D2F;
-    }
-
+  .card{
+    background:linear-gradient(180deg,#3a2722 0%, #34221e 100%);
+    border:1px solid #4d3730; border-radius:16px; padding:18px;
+    color:var(--text);
+    box-shadow:0 12px 26px rgba(0,0,0,.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:0 18px 36px rgba(0,0,0,.4)}
+  .card h3 a{color:var(--token); text-decoration:none; font-family:"Chakra Petch",system-ui,sans-serif;font-size:1.12rem}
+  .card h3 a:hover{color:#ffd58a}
+  .meta{margin:6px 0; color:#f0e6db}
+  .meta strong{color:#ffd58a}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{border-radius:999px;padding:8px 12px;font-weight:800;border:0;cursor:pointer}
+  .chip--primary{background:linear-gradient(180deg,#ffd890,var(--token));color:#2a1d18}
+  .chip--danger{background:linear-gradient(180deg,#ff8a7a,#cc3d2f);color:#fff}
+  .chip--ghost{background:transparent;border:1px dashed #7b645a;color:#e9dccb}
 </style>
 
-<div class="content-wrapper">
-    <h2>List of Board Games</h2>
+<div class="wrap">
+  <h2>🕹️ Game Catalogue</h2>
 
-    <!-- Action buttons for Profile and Logout for all users -->
-    <div class="action-buttons">
-        <!-- Profile button for all users -->
-        <a href="{% url 'profile' %}" class="action-button">Profile</a>  
+  <div class="actions-top">
+    <a class="btn" href="{% url 'profile' %}">My Library</a>
+    {% if user.is_authenticated %}
+      <a class="btn" href="{% url 'add_game' %}">+ Add Game</a>
+    {% endif %}
+  </div>
 
-        <!-- Show 'Add New Game' button only for superusers -->
-        {% if user.is_superuser %}
-            <a href="{% url 'add_game' %}" class="action-button">Add New Game</a>
-        {% endif %}
+  <div class="toggle">
+    <button id="borrowed-btn" class="active">Borrowed Games</button>
+    <button id="available-btn">Available Games</button>
+  </div>
 
-        <!-- Logout button -->
-        <form action="{% url 'logout' %}" method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="action-button">Logout</button>
-        </form>
-    </div>
+  <!-- Borrowed -->
+  <section id="borrowed" class="tab">
+    {% if borrowed_games %}
+      <div class="grid">
+        {% for game in borrowed_games %}
+          <article class="card">
+            <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3>
+            <p class="meta">{{ game.description }}</p>
+            <p class="meta"><strong>Genre:</strong> {{ game.genre }} &nbsp; • &nbsp; <strong>Players:</strong> {{ game.player_count }}</p>
+            <p class="meta"><strong>Due:</strong> {{ game.due_date|date:"M. d, Y" }}</p>
 
-    <!-- Tab Buttons -->
-    <div class="tab-buttons">
-        <button class="tab-button" onclick="showTab('borrowed')">Borrowed Games</button>
-        <button class="tab-button" onclick="showTab('available')">Available Games</button>
-    </div>
+            <div class="row-actions">
+              <!-- Return always visible; JS prevents if not borrower -->
+              <form
+                action="{% url 'return_game' game.id %}" method="post" class="return-form"
+                data-borrower="{{ game.borrowed_by.username|default_if_none:'someone else' }}"
+                data-current-user="{{ user.username }}"
+              >
+                {% csrf_token %}
+                <button class="chip chip--danger" type="submit">Return</button>
+              </form>
 
-    <!-- Borrowed Games Tab -->
-    <div id="borrowed" class="tab-content active">
-        {% if borrowed_games %}
-        <ul>
-            {% for game in borrowed_games %}
-            <li>
-                <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3> <!-- Game title now links to the game detail page -->
-                <p>{{ game.description }}</p>
-                <p><strong>Genre:</strong> {{ game.genre }}</p>
-                <p><strong>Players:</strong> {{ game.player_count }}</p>
-                <p><strong>Status:</strong> Borrowed by {{ game.borrowed_by.username }}</p>
-                <p><strong>Borrowed Date:</strong> {{ game.borrowed_date|date:"M. d, Y" }}</p>
-                <p><strong>Due Date:</strong> {{ game.due_date|date:"M. d, Y" }}</p>
+              <a class="chip chip--ghost" href="{% url 'edit_game' game.id %}">Edit</a>
+              <form action="{% url 'delete_game' game.id %}" method="post">{% csrf_token %}<button class="chip chip--ghost" type="submit">Delete</button></form>
+              <a class="chip chip--primary" href="{% url 'add_review' game.id %}">Review</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="meta" style="text-align:center;opacity:.8;">No borrowed games right now.</p>
+    {% endif %}
+  </section>
 
-                {% if game.borrowed_by == user %}
-                <!-- Button for the user to return the game -->
-                <form action="{% url 'return_game' game.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="action-button">Return Game</button>
-                </form>
-                {% endif %}
+  <!-- Available -->
+  <section id="available" class="tab" style="display:none;">
+    {% if available_games %}
+      <div class="grid">
+        {% for game in available_games %}
+          <article class="card">
+            <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3>
+            <p class="meta">{{ game.description }}</p>
+            <p class="meta"><strong>Genre:</strong> {{ game.genre }} &nbsp; • &nbsp; <strong>Players:</strong> {{ game.player_count }}</p>
+            <p class="meta"><strong>Status:</strong> Available</p>
 
-                {% if user.is_superuser %}
-                <form action="{% url 'delete_game' game.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="action-button">Delete</button>
-                </form>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>No borrowed games available.</p>
-        {% endif %}
-    </div>
-
-    <!-- Available Games Tab -->
-    <div id="available" class="tab-content">
-        {% if available_games %}
-        <ul>
-            {% for game in available_games %}
-            <li>
-                <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3> <!-- Game title now links to the game detail page -->
-                <p>{{ game.description }}</p>
-                <p><strong>Genre:</strong> {{ game.genre }}</p>
-                <p><strong>Players:</strong> {{ game.player_count }}</p>
-                <p><strong>Status:</strong> Available</p>
-                <a href="{% url 'borrow_game' game.id %}" class="action-button">Borrow</a>
-                {% if user.is_superuser %}
-                <form action="{% url 'delete_game' game.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="action-button">Delete</button>
-                </form>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>No available games at the moment.</p>
-        {% endif %}
-    </div>
+            <div class="row-actions">
+              <a class="chip chip--primary" href="{% url 'borrow_game' game.id %}">Borrow</a>
+              {% if user.is_authenticated %}
+                <a class="chip chip--ghost" href="{% url 'edit_game' game.id %}">Edit</a>
+                <form action="{% url 'delete_game' game.id %}" method="post">{% csrf_token %}<button class="chip chip--ghost" type="submit">Delete</button></form>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="meta" style="text-align:center;opacity:.8;">No games available right now.</p>
+    {% endif %}
+  </section>
 </div>
 
 <script>
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        document.getElementById(tabId).classList.add('active');
-    }
+  // Toggle tabs
+  const bBtn = document.getElementById('borrowed-btn');
+  const aBtn = document.getElementById('available-btn');
+  const bTab = document.getElementById('borrowed');
+  const aTab = document.getElementById('available');
+  bBtn.onclick = () => { bTab.style.display='block'; aTab.style.display='none'; bBtn.classList.add('active'); aBtn.classList.remove('active'); };
+  aBtn.onclick = () => { bTab.style.display='none'; aTab.style.display='block'; aBtn.classList.add('active'); bBtn.classList.remove('active'); };
+
+  // Guard 'Return' if not the borrower
+  document.querySelectorAll('.return-form').forEach(f=>{
+    f.addEventListener('submit', e=>{
+      const borrower=f.dataset.borrower?.trim();
+      const current=f.dataset.currentUser?.trim();
+      if(borrower && borrower.length && borrower!==current){
+        e.preventDefault();
+        alert(`⚠ This game is currently borrowed by ${borrower}. You can’t return it.`);
+      }
+    });
+  });
 </script>
 {% endblock %}

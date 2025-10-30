@@ -1,15 +1,88 @@
-<!-- game_edit.html -->
-{% extends 'base.html' %}
-
+{% extends "games/base.html" %}
 {% block content %}
-<h2>Edit Game</h2>
 
-<form method="post">
+<style>
+  :root{
+    --bg-wood:#2b1b17;        /* deep wood */
+    --panel:#f6f0e6;          /* parchment */
+    --ink:#2d1e19;
+    --ink-soft:#5a463f;
+    --accent:#d8a043;         /* brass token */
+    --accent-2:#c04b3b;       /* clay red */
+    --stroke:#e3d6c6;
+  }
+  body{background:var(--bg-wood);}
+  .panel{
+    max-width:920px;margin:48px auto;padding:40px 44px;
+    background:radial-gradient(1200px 600px at 50% -10%,#fff8 0%,transparent 60%) , var(--panel);
+    border:1px solid var(--stroke); border-radius:18px;
+    box-shadow:0 18px 40px rgba(0,0,0,.35), inset 0 1px 0 #fff8;
+  }
+  .title{
+    font-family:"Cinzel", "Playfair Display", serif;
+    font-weight:700; letter-spacing:.5px;
+    color:var(--ink); font-size:34px; text-align:center; margin:0 0 22px;
+    text-shadow:0 1px 0 #fff;
+  }
+  .subtle-rule{
+    height:10px; margin:0 auto 26px; max-width:360px;
+    background:
+      linear-gradient(to right, transparent, #c9b9a4 20%, #6f5a4d 50%, #c9b9a4 80%, transparent);
+    border-radius:40px; opacity:.6;
+  }
+  form .row{display:grid;grid-template-columns:180px 1fr;gap:14px 18px;align-items:center;margin:18px 0;}
+  label{font-family:"Chakra Petch",system-ui,sans-serif;color:var(--ink);opacity:.9}
+  input[type="text"], input[type="number"], textarea{
+    width:100%; padding:12px 14px; border:1px solid #d8cbbb; border-radius:10px;
+    background:#fbf9f4; color:#2b201c; font-size:15px; outline:none;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.05);
+  }
+  textarea{min-height:180px; resize:vertical;}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+  .btn{
+    appearance:none; border:0; cursor:pointer; font-weight:700;
+    border-radius:12px; padding:12px 18px; letter-spacing:.2px;
+    box-shadow:0 8px 20px rgba(0,0,0,.18), inset 0 1px 0 #fff7;
+    transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,.22)}
+  .btn:active{transform:translateY(0); filter:saturate(.9)}
+  .btn-save{background:linear-gradient(180deg,#ffd890,#d7a13f); color:#3a2a1f;}
+  .btn-ghost{background:transparent; border:1px dashed #bba995; color:#6b574d}
+  .back-link{display:inline-block;margin-top:14px;color:#a66a2e;text-decoration:none}
+  .back-link:hover{text-decoration:underline}
+</style>
+
+<section class="panel">
+  <h1 class="title">Edit Game</h1>
+  <div class="subtle-rule"></div>
+
+  <form method="post" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="action-button">Save Changes</button>
-</form>
+    <div class="row">
+      <label for="id_title">Title:</label>
+      {{ form.title }}
+    </div>
 
-<a href="{% url 'game_list' %}" class="back-link">Back to Game List</a>
+    <div class="row">
+      <label for="id_description">Description:</label>
+      {{ form.description }}
+    </div>
+
+    <div class="row">
+      <label for="id_genre">Genre:</label>
+      {{ form.genre }}
+    </div>
+
+    <div class="row">
+      <label for="id_player_count">Player count:</label>
+      {{ form.player_count }}
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-save" type="submit">Save Changes</button>
+      <a class="btn btn-ghost" href="{% url 'game_list' %}">Cancel</a>
+    </div>
+  </form>
+</section>
 {% endblock %}
-
