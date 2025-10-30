@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GameLend{% endblock %}</title>
+
+    <!-- 🎮 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --bg-dark: #39180d;
+        --bg-card: #39180d;
+        --bg-hover: #39180d;
+        --accent: #ffb703;
+        --accent-hover: #f4a261;
+        --text-light: #fcefe3;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Chakra Petch', sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        letter-spacing: 0.2px;
+      }
+
+      /* 🌟 Café-style navbar */
+      .main-nav {
+        background:
+          url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4AWP4z/CfFwAFhwJ9FvJ5VAAAAABJRU5ErkJggg=="),
+          linear-gradient(180deg, #3a2722 0%, #2b1b17 100%);
+        background-blend-mode: overlay;
+        border-bottom: 2px solid #4d3730;
+        box-shadow: inset 0 -2px 8px rgba(0, 0, 0, 0.5),
+                    0 4px 20px rgba(0, 0, 0, 0.45);
+        padding: 1rem 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "Cinzel", serif;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .main-nav::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at top center,
+          rgba(255, 224, 160, 0.08) 0%,
+          rgba(0, 0, 0, 0.25) 90%
+        );
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+      }
+
+      .logo {
+        color: var(--accent);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.95rem;
+        margin: 0;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-shadow: 0 1px 0 #fff3, 0 2px 4px rgba(0, 0, 0, 0.6);
+      }
+
+      .icon { margin-right: 6px; }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+      }
+
+      .nav-btn {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(216, 160, 67, 0.2);
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.25s ease;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .nav-btn:hover {
+        background: linear-gradient(180deg, #f8e8c2 0%, #d8a043 100%);
+        color: #2b1b17;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+        text-shadow: 0 1px 0 #fff7;
+        transform: translateY(-1px);
+      }
+
+      .logout-form { display: inline; margin: 0; }
+
+      .nav-btn.active {
+        background: linear-gradient(180deg, #ffd890, #d8a043);
+        color: #2b1b17;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+      }
+
+      main {
+        flex: 1;
+        padding: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1rem;
+        background-color: var(--bg-card);
+        color: #fcefe3aa;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+      }
+
+      .btn {
+        background-color: var(--accent);
+        color: var(--bg-dark);
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.25s;
+      }
+
+      .btn:hover {
+        background-color: var(--accent-hover);
+        color: var(--text-light);
+        box-shadow: 0 0 8px rgba(244, 162, 97, 0.4);
+      }
+
+      .card {
+        background-color: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        margin-bottom: 1.5rem;
+        transition: 0.25s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(244, 162, 97, 0.3);
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="main-nav">
+      <div class="nav-left">
+        <h1 class="logo"><span class="icon">🎲</span> GameLend</h1>
+      </div>
+
+      <div class="nav-right">
+        <a href="{% url 'home' %}" class="nav-btn">Home</a>
+        <a href="{% url 'game_list' %}" class="nav-btn">Catalogue</a>
+        <a href="{% url 'profile' %}" class="nav-btn">Library</a>
+
+        {% if user.is_authenticated %}
+          <form action="{% url 'logout' %}" method="post" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="nav-btn logout-btn">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="nav-btn">Login</a>
+        {% endif %}
+      </div>
+    </nav>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+      © 2025 GameLend · Brewed with ☕ and built with Django
+    </footer>
+
+    <!-- 🧩 Dancing Ludo Pins + Dice (All pages except Home) -->
+    {% if request.path != '/' %}
+    <style>
+      .floating-decor {
+        position: fixed;
+        width: 80px;
+        height: auto;
+        opacity: 0.9;
+        z-index: 0;
+        pointer-events: none;
+        filter: drop-shadow(0 0 10px rgba(255, 220, 160, 0.4));
+        animation-timing-function: ease-in-out;
+      }
+
+      @keyframes danceUpDown {
+        0%,100% { transform: translateY(0) rotate(-10deg); }
+        50% { transform: translateY(-25px) rotate(10deg); }
+      }
+
+      @keyframes danceLeftRight {
+        0%,100% { transform: translateX(0) rotate(8deg); }
+        50% { transform: translateX(25px) rotate(-8deg); }
+      }
+
+      @keyframes diceSpin {
+        0%,100% { transform: rotate(0deg) translateY(0); }
+        25% { transform: rotate(15deg) translateY(-10px); }
+        50% { transform: rotate(0deg) translateY(0); }
+        75% { transform: rotate(-15deg) translateY(-10px); }
+      }
+
+      .pin-red { bottom: 12%; left: 5%; animation: danceUpDown 3.2s infinite; }
+      .pin-blue { top: 14%; right: 6%; animation: danceLeftRight 3.8s infinite; }
+      .pin-yellow { bottom: 15%; right: 10%; animation: danceUpDown 4.1s infinite; }
+      .pin-green { top: 18%; left: 10%; animation: danceLeftRight 3s infinite; }
+
+      .floating-dice {
+        width: 100px;
+        bottom: 8%;
+        left: 48%;
+        animation: diceSpin 4.5s infinite ease-in-out;
+        filter: drop-shadow(0 0 15px rgba(255, 230, 150, 0.6));
+      }
+    </style>
+
+    <img src="{% static 'pins/red.png' %}" class="floating-decor pin-red" alt="Red Ludo Pin">
+    <img src="{% static 'pins/blue.png' %}" class="floating-decor pin-blue" alt="Blue Ludo Pin">
+    <img src="{% static 'pins/yellow.png' %}" class="floating-decor pin-yellow" alt="Yellow Ludo Pin">
+    <img src="{% static 'pins/green.png' %}" class="floating-decor pin-green" alt="Green Ludo Pin">
+    <img src="{% static 'pins/dice.gif' %}" class="floating-decor floating-dice" alt="Animated Dice">
+    {% endif %}
+  </body>
+</html>

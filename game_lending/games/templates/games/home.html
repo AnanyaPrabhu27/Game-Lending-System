@@ -1,0 +1,156 @@
+{% extends "games/base.html" %}
+{% load static %}
+{% block title %}Home | GameLend{% endblock %}
+{% block content %}
+
+<style>
+  :root {
+    --bg-wood: #2b1b17;
+    --accent: #d8a043;
+    --shine: #ffedc2;
+  }
+
+  body {
+    background: var(--bg-wood);
+    overflow: hidden;
+    position: relative; /* ✅ makes videos attach to body instead of .scene */
+  }
+
+  .scene {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* 🪄 Hero Box */
+  .hero {
+    position: relative;
+    text-align: center;
+    color: #f7efe6;
+    background: linear-gradient(180deg, #3a2722 0%, #2f1e1a 100%);
+    border: 1px solid #4d3730;
+    border-radius: 24px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+    padding: 60px 60px 70px;
+    max-width: 650px;
+    z-index: 10;
+  }
+
+  .hero h1 {
+    font-family: "Cinzel", "Playfair Display", serif;
+    font-weight: 800;
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: var(--shine);
+    text-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .hero p {
+    max-width: 540px;
+    margin: 0 auto 22px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #f3e6d7;
+  }
+
+  .cta {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .cta a {
+    background: linear-gradient(180deg, #ffd890, var(--accent));
+    color: #2b1c16;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .cta a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  /* 🎥 Floating Animations */
+  .floating {
+    position: fixed; /* ✅ instead of absolute, ties to entire page */
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    opacity: 0.7;
+    filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 12px rgba(255, 210, 120, 0.4));
+    border-radius: 16px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ✨ Smooth Floating Keyframes */
+  @keyframes float1 {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(40px, -30px) rotate(8deg); }
+  }
+  @keyframes float2 {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(-40px, 25px) rotate(-10deg); }
+  }
+  @keyframes float3 {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(35px, 35px) rotate(6deg); }
+  }
+  @keyframes float4 {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(-25px, -35px) rotate(-6deg); }
+  }
+
+  /* 📍 Now positioned around full page corners */
+  .dice { top: 15%; left: 6%; animation: float1 9s ease-in-out infinite; }
+  .chess { top: 10%; right: 8%; animation: float2 11s ease-in-out infinite; }
+  .cards { bottom: 10%; left: 10%; animation: float3 8s ease-in-out infinite; }
+  .hand { bottom: 10%; right: 8%; animation: float4 10s ease-in-out infinite; }
+
+</style>
+
+<!-- 🌌 Floating Background Animations -->
+<video autoplay loop muted playsinline class="floating dice">
+  <source src="{% static 'animations/dice.mp4' %}" type="video/mp4">
+</video>
+
+<video autoplay loop muted playsinline class="floating chess">
+  <source src="{% static 'animations/chess.mp4' %}" type="video/mp4">
+</video>
+
+<video autoplay loop muted playsinline class="floating cards">
+  <source src="{% static 'animations/poker.mp4' %}" type="video/mp4">
+</video>
+
+<video autoplay loop muted playsinline class="floating hand">
+  <source src="{% static 'animations/carrom.mp4' %}" type="video/mp4">
+</video>
+
+<!-- 💫 Main Scene -->
+<div class="scene">
+  <section class="hero">
+    <h1>Welcome to <span style="color:#ffd890;">GameLend</span></h1>
+    <p>Borrow, review, and share tabletop joy like it’s a cozy evening at your favorite board-game café.</p>
+
+    <div class="cta">
+      <a href="{% url 'game_list' %}">Browse Catalogue</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'add_game' %}">Add a Game</a>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+      {% endif %}
+    </div>
+  </section>
+</div>
+
+{% endblock %}
