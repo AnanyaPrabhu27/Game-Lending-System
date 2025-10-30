@@ -2,14 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "game_lending/game_lending/wsgi.py",
-      "use": "@vercel/python"
+      "src": "game_lending/manage.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "50mb" }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "game_lending/game_lending/wsgi.py"
+      "dest": "game_lending/manage.py"
     }
   ],
   "env": {
