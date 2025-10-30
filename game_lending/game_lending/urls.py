@@ -5,6 +5,7 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('games.urls')), 
     path('', views.game_list, name='game_list'),
     path('borrow/<int:game_id>/', views.borrow_game, name='borrow_game'),
     path('return/<int:game_id>/', views.return_game, name='return_game'),
