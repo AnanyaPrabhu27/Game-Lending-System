@@ -2,6 +2,12 @@
 
 A Django-based platform that allows users to upload, lend, borrow, and review games. Built as a group project, this system helps facilitate game sharing between users in a structured and user-friendly way.
 
+## 🌐 Live Demo
+
+🔗https://game-lending-system.onrender.com/ 
+
+(Login or Sign up to explore!)
+
 ## 🚀 Features
 
 - User registration and login
