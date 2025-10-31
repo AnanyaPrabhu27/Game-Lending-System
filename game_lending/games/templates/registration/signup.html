@@ -1,76 +1,103 @@
-
-{% extends "base.html" %}
+{% extends "games/base.html" %}
+{% load static %}
 
 {% block content %}
 <style>
-    /* Centering and styling the signup container */
-    .signup-container {
-        max-width: 500px;
-        margin: 50px auto;
-        background-color: #FAF7F0; /* Match container color to theme */
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        text-align: center;
-    }
+  body {
+    background-color: #3b1a00;
+  }
 
-    .signup-container h2 {
-        font-size: 28px;
-        color: #333;
-        margin-bottom: 20px;
-    }
+  .signup-container {
+    max-width: 550px;
+    margin: 50px auto;
+    background-color: #fdf8f3;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
+  h2 {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #332218;
+    margin-bottom: 30px;
+  }
 
-    form p {
-        text-align: left;
-    }
+  label {
+    color: #5a4032;
+    font-weight: 600;
+  }
 
-    input[type="text"],
-    input[type="password"] {
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        width: 100%;
-    }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 16px;
+    border-radius: 6px;
+    border: 1px solid #d6b99d;
+    background-color: #fffaf5;
+  }
 
-    button {
-        padding: 12px;
-        font-size: 16px;
-        color: white;
-        background-color: #C63D2F; /* Updated button color */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
+  ul {
+    color: #8b6a4e;
+    font-size: 0.9rem;
+  }
 
-    button:hover {
-        background-color: #A83224;
-    }
+  .signup-btn {
+    background-color: #e44c32;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
 
-    .password-guidelines {
-        font-size: 14px;
-        color: #666;
-        text-align: left;
-    }
+  .signup-btn:hover {
+    background-color: #c93822;
+  }
+   /* ✅ Fix unreadable text */
+  .helptext,
+  ul {
+    color: #7b5542;
+    font-size: 0.9rem;
+    margin-top: 2px;
+  }
 
-    .password-guidelines ul {
-        padding-left: 20px;
-    }
+  .helptext {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  ul {
+    list-style-type: disc;
+    margin-left: 25px;
+  }
+
+  li {
+    margin: 3px 0;
+  }
+
+  /* ✅ Style form errors if any */
+  .errorlist {
+    color: #b13b25;
+    font-weight: 600;
+    list-style: none;
+    margin-left: 0;
+  }
+    
 </style>
 
 <div class="signup-container">
-    <h2>Sign Up</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign Up</button>
-    </form>
+  <h2>Sign Up</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="signup-btn">Sign Up</button>
+  </form>
 </div>
 {% endblock %}
