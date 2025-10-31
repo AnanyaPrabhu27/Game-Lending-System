@@ -1,87 +1,87 @@
-{% load static %}
 {% extends "games/base.html" %}
-{% block title %}Login | GameLend{% endblock %}
-{% block content %}
+{% load static %}
 
+{% block content %}
 <style>
-  :root {
-    --bg-wood:#2b1b17; 
-    --panel:#3a2722; 
-    --text:#f7efe6; 
-    --accent:#d8a043; 
-    --error:#c04b3b;
-  }
+  /* Optional styling, matches your sign-up page theme */
   body {
-    background: var(--bg-wood);
-    font-family: "Chakra Petch", system-ui, sans-serif;
+    background-color: #3b1a00;
   }
-  .login-wrapper {
-    max-width: 420px;
-    margin: 60px auto;
-    background: var(--panel);
-    padding: 2rem 2.5rem;
-    border-radius: 18px;
-    color: var(--text);
-    box-shadow: 0 12px 26px rgba(0,0,0,.4);
-    border: 1px solid #4d3730;
+
+  .login-container {
+    max-width: 450px;
+    margin: 80px auto;
+    background-color: #fdf8f3;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
+
   h2 {
-    font-family: "Press Start 2P", system-ui;
-    color: var(--accent);
     text-align: center;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 2px 0 rgba(0,0,0,.3);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #332218;
+    margin-bottom: 25px;
   }
+
   label {
-    display:block;
-    margin-top: 1rem;
+    color: #5a4032;
     font-weight: 600;
   }
+
   input[type="text"],
   input[type="password"] {
     width: 100%;
-    margin-top: 6px;
     padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #6b5147;
-    background: #2b1b17;
-    color: var(--text);
+    margin: 8px 0 16px;
+    border-radius: 6px;
+    border: 1.5px solid #c9a882;
+    background-color: #fffaf5;
+    color: #332218;
+    font-size: 1rem;
   }
-  .btn {
-    margin-top: 1.6rem;
+
+  .login-btn {
+    background-color: #e44c32;
+    color: white;
     width: 100%;
-    background: linear-gradient(180deg,#ffd890,var(--accent));
-    color: #2a1d18;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
     border: none;
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-weight: 800;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 8px 18px rgba(0,0,0,.25), inset 0 1px 0 #fff7;
+    transition: 0.3s ease;
   }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,.32); }
-  .errorlist { color: var(--error); list-style:none; padding:0; margin:0.8rem 0; }
-  .extra-links { text-align:center; margin-top:1.2rem; }
-  .extra-links a { color: var(--accent); text-decoration:none; }
-  .extra-links a:hover { text-decoration:underline; }
+
+  .login-btn:hover {
+    background-color: #c93822;
+  }
+
+  .dice-icon {
+    display: block;
+    margin: 15px auto 10px;
+    width: 70px;
+  }
+
+  .signup-link {
+    text-align: center;
+    margin-top: 10px;
+  }
 </style>
 
-<div class="login-wrapper">
-  <h2>🔐 Log In</h2>
-  <form method="post">
+<div class="login-container">
+  <h2>Login</h2>
+  <form method="POST">
     {% csrf_token %}
-    {{ form.non_field_errors }}
-    <label for="id_username">Username</label>
-    {{ form.username }}
-    <label for="id_password">Password</label>
-    {{ form.password }}
-    <button type="submit" class="btn">Login</button>
+    {{ form.as_p }}
+    <img class="dice-icon" src="{% static 'animations/dice.png' %}" alt="Dice Icon" />
+    <button type="submit" class="login-btn">Login</button>
   </form>
 
-  <div class="extra-links">
-    <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+  <div class="signup-link">
+    <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
   </div>
 </div>
-
 {% endblock %}
