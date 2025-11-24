@@ -4,7 +4,7 @@ A Django-based platform that allows users to upload, lend, borrow, and review ga
 
 ## 🌐 Live Demo
 
-🔗https://game-lending-system.onrender.com/ 
+🔗https://game-lending-system.onrender.com
 
 (Login or Sign up to explore!)
 
